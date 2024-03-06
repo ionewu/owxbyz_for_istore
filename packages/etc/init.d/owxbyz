@@ -1,0 +1,39 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=50
+
+owlogdir="/tmp/.owxbyz"
+owlogfile="${owlogdir}/startup.log"
+[ -d ${owlogdir} ] || mkdir ${owlogdir}
+echo "==== $(date) /etc/init.d/owxbyz ${@}..." >${owlogfile}
+
+start() {
+    local enabled=$(uci -q get owxbyz.config.enabled)
+    echo "$(date) owxbyz start...enable=${enabled}" >>${owlogfile}
+    [ "aa1zz" = "aa${enabled}zz" ] || return 0
+
+    local cachepath=$(uci -q get owxbyz.config.cache_path)
+    echo "$(date) owxbyz start...cachepath=${cachepath}" >>${owlogfile}
+    [ -z "${cachepath}" ] && return 0
+    [ -d "${cachepath}" ] || mkdir -p "${cachepath}"
+
+    local workpath=${IPKG_INSTROOT}/usr/local/owxbyz
+    sh ${workpath}/start.sh "${cachepath}" >>${owlogfile}
+    return 0
+}
+
+stop() {
+    echo "$(date) owxbyz stop..." >>${owlogfile}
+    local workpath=${IPKG_INSTROOT}/usr/local/owxbyz
+    sh ${workpath}/stop.sh
+    return 0
+}
+
+reload() {
+    echo "$(date) owxbyz reload..." >>${owlogfile}
+    stop
+    docker ps -q -a -f NAME=owxbyz_ | xargs -n1 docker rm -f >/dev/null 2>&1
+    start
+    return 0
+}

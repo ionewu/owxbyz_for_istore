@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ -z "${IPKG_INSTROOT}" ]; then
+    [ -f /etc/uci-defaults/owxbyz ] && /etc/uci-defaults/owxbyz && rm -f /etc/uci-defaults/owxbyz
+fi
+exit 0

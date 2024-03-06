@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if ! uci -q get owxbyz.config >/dev/null; then
+    echo "config owxbyz 'config'" > /etc/config/owxbyz
+fi
+
+uci -q set owxbyz.config.enabled=1
+uci commit owxbyz
+
+chmod +x /etc/init.d/owxbyz
+/etc/init.d/owxbyz enable
+/etc/init.d/owxbyz start
+
+exit 0

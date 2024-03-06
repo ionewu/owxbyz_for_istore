@@ -1,0 +1,24 @@
+<%
+local owxbyz_pid = luci.sys.exec("curl -s -m 6 -o- http://127.0.0.1:9120/sys/sign 2>/dev/null")
+local owxbyz_running = owxbyz_pid and (#owxbyz_pid > 20)
+-%>
+
+<div class="cbi-value">
+    <div class="cbi-value-field">
+        <% if owxbyz_running then %>
+        <em><font color=green><%:Yizhan Service Running%></font></em>
+        <p />
+        <button class="cbi-button cbi-button-success" id="btnOpenYZ"><%:Touch for open service%></button>
+        <% else %>
+        <em><font color=red><%:Yizhan Service Stopped%></font></em>
+        <% end %>
+    </div>
+</div>
+<script>
+document.getElementById("btnOpenYZ").addEventListener("click", function(e){ 
+        e.preventDefault();
+        window.open("https://yz.iepose.com/istore/?"+"<%=owxbyz_pid%>", "iepose");
+        });
+</script>
+
+
